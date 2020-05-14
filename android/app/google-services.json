@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "347814819573",
+    "firebase_url": "https://anandahappiness-20856.firebaseio.com",
+    "project_id": "anandahappiness-20856",
+    "storage_bucket": "anandahappiness-20856.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347814819573:android:446c46fb20de43640337bc",
+        "android_client_info": {
+          "package_name": "com.anandahappiness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347814819573-p1h871btlnislk8jn1a0p7sr0q3tk270.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiv7dimEz7-nuMwHYG4PwfSdRpzbEIscs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347814819573-p1h871btlnislk8jn1a0p7sr0q3tk270.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "347814819573-1ih53g2rsl5acelnl25bhs0t98nqeaum.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.anandahappiness"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
