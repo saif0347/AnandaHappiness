@@ -8,6 +8,20 @@ import SubCats from './app/view/subcats.js';
 import Videos from './app/view/videos.js';
 import VideoPlay from './app/view/video_play.js';
 import AboutUs from './app/view/about.js';
+
+import AdminLogin from './app/view/admin_login.js';
+import AdminHome from './app/view/admin_home.js';
+import AdminAboutUs from './app/view/admin_about_us.js';
+import AdminCats from './app/view/admin_cats.js';
+import AdminSubCats from './app/view/admin_subcats.js';
+import AdminVideos from './app/view/admin_videos.js';
+import AdminAddCat from './app/view/admin_add_cat.js';
+import AdminAddSubCat from './app/view/admin_add_subcat.js';
+import AdminEditSubCat from './app/view/admin_edit_subcat.js';
+import AdminAddVideo from './app/view/admin_add_video.js';
+import AdminEditVideo from './app/view/admin_edit_video.js';
+import AdminEditCat from './app/view/admin_edit_cat.js';
+
 import {Root} from "native-base";
 import GLOBAL from './app/constants/global.js';
 import MyStorage from './app/storage/storage.js';
@@ -18,6 +32,30 @@ import {stylesC} from './app/styles/style_common.js';
 
 const SplashStack = createStackNavigator({
   Splash: Splash,
+},{
+  /* The header settings */
+  defaultNavigationOptions: null
+});
+
+const AdminLoginStack = createStackNavigator({
+  AdminLogin: AdminLogin,
+},{
+  /* The header settings */
+  defaultNavigationOptions: null
+});
+
+const AdminStack = createStackNavigator({
+  AdminHome: AdminHome,
+  AdminAboutUs: AdminAboutUs,
+  AdminCats: AdminCats,
+  AdminSubCats: AdminSubCats,
+  AdminVideos: AdminVideos,
+  AdminAddCat: AdminAddCat,
+  AdminEditCat: AdminEditCat,
+  AdminAddSubCat: AdminAddSubCat,
+  AdminAddVideo: AdminAddVideo,
+  AdminEditVideo: AdminEditVideo,
+  AdminEditSubCat: AdminEditSubCat
 },{
   /* The header settings */
   defaultNavigationOptions: null
@@ -93,7 +131,9 @@ const Tabs = createBottomTabNavigator(
 const MainStack = createStackNavigator({
     Splash: SplashStack,
     Home: Tabs,
-    VideoPlay: VideoPlayStack
+    VideoPlay: VideoPlayStack,
+    AdminLogin: AdminLoginStack,
+    Admin: AdminStack,
   },{
     initialRouteName: 'Splash',
     headerMode: 'none'

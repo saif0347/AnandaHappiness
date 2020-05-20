@@ -11,7 +11,7 @@ import GLOBAL from '../constants/global.js';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Collections from '../constants/firebase';
 import firestore from '@react-native-firebase/firestore';
-import AsyncImage from '../view/async_image.js';
+import AsyncImage from '../view/async_image.js'; 
 
 class AboutUs extends React.Component {
   static navigationOptions = {

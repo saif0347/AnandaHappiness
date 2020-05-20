@@ -5,28 +5,22 @@ import * as Colors from '../constants/colors.js';
 import AppStrings from '../constants/strings.js';
 import AppStringsAs from '../constants/strings_as.js';
 import {stylesC} from '../styles/style_common.js';
-import {Loader,Row,Col,Box,IconCustom} from '../custom/components.js';
+import {Loader,Row,Col,Box,IconCustom,BackButton,Button} from '../custom/components.js';
 import {NavigationEvents} from 'react-navigation';
 import GLOBAL from '../constants/global.js';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Collections from '../constants/firebase';
 import firestore from '@react-native-firebase/firestore';
 import AsyncImage from '../view/async_image.js';
-import Utils from '../util/utils.js';
 
-class Home extends React.Component {
+class AdminCats extends React.Component {
   static navigationOptions = {
     header: null ,
   };ß
 
   constructor(props){
     super(props);
-    if(GLOBAL.lang === 'en'){
-      Strings = AppStrings.getInstance();
-    }
-    else{
-      Strings = AppStringsAs.getInstance();
-    }
+    Strings = AppStrings.getInstance();
   }
 
   state = {
@@ -35,8 +29,6 @@ class Home extends React.Component {
   };
 
   COLORS = ['#c9fbad','#adfbf4','#d0d3fc','#fac8cd','#fbe1ad','#fbcff6'];
-
-  count = 0;
 
   render(){
     return (
@@ -50,28 +42,27 @@ class Home extends React.Component {
             <LinearGradient 
               colors={[Colors.theme1, Colors.theme, Colors.background]} 
               style={{width:'100%',height:55,backgroundColor:Colors.white,paddingHorizontal:15, alignItems:'center',justifyContent:'center'}}>
-              
-              <TouchableOpacity
-                style={{marginLeft:10}}
-                activeOpacity={1}
-                onPress={()=>{
-                  // handle click
-                  if(this.count > 3){
-                    Utils.moveToAnotherStack(this.props.navigation, 'AdminLogin');
-                    this.count = 0;
-                    return;
-                  }
-                  this.count++;
-                }}>
-                <Text style={[stylesC.textDB18,{color:'white'}]}>
-                  {Strings.app_name}
-                </Text>
-              </TouchableOpacity>
-            
+              <Text style={[stylesC.textDB18,{marginLeft:10,color:'white'}]}>
+                Categories
+              </Text>
             </LinearGradient>
+            <BackButton
+              onPress={()=>{
+                this.props.navigation.goBack();
+              }}/>
             <ScrollView>
             <Col extraStyle={[{padding:15}]}>
-              <View style={{width:'100%'}}>
+              <Button
+                label='Add Category'
+                activeOpacity={0.6}
+                buttonStyle={[stylesC.button45,{marginTop:0,marginHorizontal:0}]}
+                labelStyle={[stylesC.buttonT16]}
+                onPress={()=>{
+                  if(this.state.loading)
+                    return;
+                  this.props.navigation.navigate('AdminAddCat',{size:this.state.models.length});
+                }}/>
+              <View style={{marginTop:10,width:'100%'}}>
                 <FlatList
                   showsVerticalScrollIndicator={false}
                   horizontal={false}
@@ -99,32 +90,48 @@ class Home extends React.Component {
     return (
       <TouchableOpacity
         style={{flex:1}}
-        activeOpacity={0.6}
+        activeOpacity={1}
         onPress={()=>{
-          this.props.navigation.navigate('SubCats',{id:item.id, title:item.title});
+          //
         }}>
         <Card
           noShadow
-          style={{flex:1,padding:15,borderRadius:50,marginBottom:10}}>
+          style={{flex:1,padding:10,borderRadius:5,marginBottom:10}}>
           <Row center>
-            <Col center extraStyle={{flex:1,marginLeft:15}}>
+            <Col center extraStyle={{flex:1,marginLeft:0}}>
               <Box center extraStyle={[{backgroundColor:item.color,width:70,height:70,borderRadius:35}]}>
                 <AsyncImage
-                  image={item.icon}
+                  image={item.icon===''? 'dummy.png' : item.icon}
                   style={{width:40,height:40,tintColor:Colors.themeDark}}/>
               </Box>
             </Col>
-            <Col middleLeft extraStyle={{flex:3,marginLeft:30}}>
+            <Col middleLeft extraStyle={{flex:3,marginLeft:15}}>
               <Text style={stylesC.textM16}>
                 {item.title}
               </Text>
             </Col>
-            <Col center extraStyle={{flex:1}}>
-              <IconCustom
-                conatinerStyle={[stylesC.center]}
-                imageStyle={[stylesC.imageM28,{tintColor:Colors.iconLight}]}
-                resizeMode='contain'
-                source={require('../assets/arrow_right.png')}/>
+            <Col center extraStyle={{flex:1.5}}>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={()=>{
+                  if(this.state.loading)
+                    return;
+                  this.props.navigation.navigate('AdminEditCat', {item:item});
+                }}>
+                <Text style={[stylesC.textD14,{color:'blue'}]}>
+                  Edit
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{marginTop:10}}
+                activeOpacity={0.6}
+                onPress={()=>{
+                  this.props.navigation.navigate('AdminSubCats',{id:item.id, title:item.title});
+                }}>
+                 <Text style={[stylesC.textD14,{color:'blue'}]}>
+                  View
+                </Text>
+              </TouchableOpacity>
             </Col>
           </Row>
         </Card>
@@ -135,11 +142,11 @@ class Home extends React.Component {
 
   async componentDidMount(){
     console.log("Home mount");
-    this.loadData(); 
   }
 
   onFocus = async ()=>{
     console.log("Home focus");
+    this.loadData(); 
   };
 
   loadData = async () => {
@@ -153,27 +160,14 @@ class Home extends React.Component {
     categories.forEach(doc => {
       this.setState(state => {
         let data = doc.data();
-
-        let name;
-        if(GLOBAL.lang==='en'){
-          name = data.name_en;
-        }
-        else{
-          if(data.name_as === ''){
-            name = data.name_en;
-          }
-          else{
-            name = data.name_as;
-          }
-        } 
-
         if(i >= this.COLORS.length){
           i = 0;
         }
         let color = this.COLORS[i];
         let item = {
             id: data.id,
-            title: name,
+            title: data.name_en,
+            title_as: data.name_as,
             icon: data.icon,
             color: color,
         };
@@ -186,4 +180,4 @@ class Home extends React.Component {
 
 }
 
-export default Home
+export default AdminCats
