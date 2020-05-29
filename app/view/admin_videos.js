@@ -23,6 +23,8 @@ class AdminVideos extends React.Component {
     Strings = AppStrings.getInstance();
   }
 
+  maxId = 0;
+
   state = {
     catId:'',
     subCatId:'',
@@ -58,7 +60,7 @@ class AdminVideos extends React.Component {
                 onPress={()=>{
                   if(this.state.loading)
                     return;
-                  this.props.navigation.navigate('AdminAddVideo', {catId:this.state.catId, subCatId:this.state.subCatId, size:this.state.models.length});
+                  this.props.navigation.navigate('AdminAddVideo', {catId:this.state.catId, subCatId:this.state.subCatId, size:this.maxId});
                 }}/>
               <View style={{width:'100%',marginTop:10}}>
                 <FlatList
@@ -139,6 +141,11 @@ class AdminVideos extends React.Component {
     let subCatId = this.props.navigation.getParam('subCatId');
     let title = this.props.navigation.getParam('title');
     let models = this.props.navigation.getParam('models');
+    this.maxId = this.props.navigation.getParam('size');
+
+    console.log('catId: '+catId);
+    console.log('subCatId: '+subCatId);
+
     this.setState({catId:catId, subCatId:subCatId, title:title, models:models});
   }
 
@@ -150,11 +157,12 @@ class AdminVideos extends React.Component {
 
   loadVideos = async ()=>{
     console.log('loadVideos');
+    
     let videos = await firestore()
       .collection(Collections.categories)
-      .doc(this.state.catId)
+      .doc(''+this.state.catId)
       .collection(Collections.subcategories)
-      .doc(this.state.subCatId)
+      .doc(''+this.state.subCatId)
       .collection(Collections.videos)
       .orderBy('id', 'desc')
       .get();
@@ -167,6 +175,12 @@ class AdminVideos extends React.Component {
     }
     videos.forEach(doc => { 
       let data = doc.data();
+
+      let id = parseInt(data.id);
+      if(id > this.maxId){
+        this.maxId = id;
+      }
+
       let title = data.title_en;
       let desc = data.desc_en;
       let item = {

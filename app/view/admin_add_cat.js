@@ -72,7 +72,7 @@ class AdminAddCat extends React.Component {
                 </Col>
                 <Input
                   placeholder='Name (English)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:20,marginHorizontal:0}]}
+                  inputContainerStyle={{marginTop:20}}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -80,7 +80,6 @@ class AdminAddCat extends React.Component {
                   value={this.state.name_en}/>
                 <Input
                   placeholder='Name (Assamese)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -126,6 +125,9 @@ class AdminAddCat extends React.Component {
   };
 
   addCat = ()=>{
+    if(this.state.newPhoto == null){
+      return;
+    }
     if(this.state.name_en === ''){
       return;
     }

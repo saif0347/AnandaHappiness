@@ -51,7 +51,6 @@ class AdminEditSubCat extends React.Component {
               <Col extraStyle={[{padding:15}]}>
                 <Input
                   placeholder='Name (English)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -60,7 +59,6 @@ class AdminEditSubCat extends React.Component {
                   blurOnSubmit={false}/>
                 <Input
                   placeholder='Name (Assamese)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -107,7 +105,7 @@ class AdminEditSubCat extends React.Component {
             this.setState({loading:true});
             firestore()
                 .collection(Collections.categories)
-                .doc(this.state.catId)
+                .doc(''+this.state.catId)
                 .collection(Collections.subcategories)
                 .doc(''+this.state.id)
                 .delete()
@@ -130,7 +128,7 @@ class AdminEditSubCat extends React.Component {
     this.setState({loading:true});
     firestore()
       .collection(Collections.categories)
-      .doc(this.state.catId)
+      .doc(''+this.state.catId)
       .collection(Collections.subcategories)
       .doc(''+this.state.id)
       .set({

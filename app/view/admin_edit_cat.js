@@ -36,7 +36,7 @@ class AdminEditCat extends React.Component {
     name_en:'',
     name_as:'',
     newPhoto:null,
-    oldPhoto:'',
+    oldPhoto:'dummy.png',
   };
 
   render(){
@@ -65,8 +65,8 @@ class AdminEditCat extends React.Component {
                         source={{uri:this.state.newPhoto.uri}}/>
                     :
                     <AsyncImage
-                        image={this.state.oldPhoto===''? 'dummy.png' : this.state.oldPhoto}
-                        style={{width:100,height:100,tintColor:Colors.themeDark}}/>
+                        image={this.props.navigation.getParam('item').icon}
+                        style={{width:100,height:100}}/>
                   }
                   <Button
                     label='Browse'
@@ -79,7 +79,7 @@ class AdminEditCat extends React.Component {
                 </Col>
                 <Input
                   placeholder='Name (English)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:20,marginHorizontal:0}]}
+                  inputContainerStyle={{marginTop:20}}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -88,7 +88,6 @@ class AdminEditCat extends React.Component {
                   blurOnSubmit={false}/>
                 <Input
                   placeholder='Name (Assamese)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -183,6 +182,9 @@ class AdminEditCat extends React.Component {
         console.log('ref:'+ref);
         if(this.state.newPhoto !== null){
           this.uploadPhoto(this.state.id);
+        }
+        else{
+          this.props.navigation.goBack();
         }
       });
   };

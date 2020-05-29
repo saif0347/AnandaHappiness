@@ -23,6 +23,8 @@ class AdminCats extends React.Component {
     Strings = AppStrings.getInstance();
   }
 
+  maxId = 0;
+
   state = {
     loading:false,
     models:[],
@@ -60,7 +62,7 @@ class AdminCats extends React.Component {
                 onPress={()=>{
                   if(this.state.loading)
                     return;
-                  this.props.navigation.navigate('AdminAddCat',{size:this.state.models.length});
+                  this.props.navigation.navigate('AdminAddCat',{size: this.maxId});
                 }}/>
               <View style={{marginTop:10,width:'100%'}}>
                 <FlatList
@@ -112,6 +114,7 @@ class AdminCats extends React.Component {
             </Col>
             <Col center extraStyle={{flex:1.5}}>
               <TouchableOpacity
+                style={{width:100,height:30,alignItems:'center',justifyContent:'center'}}
                 activeOpacity={0.6}
                 onPress={()=>{
                   if(this.state.loading)
@@ -123,9 +126,11 @@ class AdminCats extends React.Component {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{marginTop:10}}
+                style={{width:100,height:30,alignItems:'center',justifyContent:'center'}}
                 activeOpacity={0.6}
                 onPress={()=>{
+                  if(this.state.loading)
+                    return;
                   this.props.navigation.navigate('AdminSubCats',{id:item.id, title:item.title});
                 }}>
                  <Text style={[stylesC.textD14,{color:'blue'}]}>
@@ -160,6 +165,12 @@ class AdminCats extends React.Component {
     categories.forEach(doc => {
       this.setState(state => {
         let data = doc.data();
+
+        let id = parseInt(data.id);
+        if(id > this.maxId){
+          this.maxId = id;
+        }
+
         if(i >= this.COLORS.length){
           i = 0;
         }

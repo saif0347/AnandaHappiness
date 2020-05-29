@@ -1,18 +1,15 @@
 import React from 'react';
-import {View,Text,FlatList, ScrollView,TouchableOpacity,BackHandler} from 'react-native';
-import {Container,Content,Header,Left,Body,Right,Title,Card} from 'native-base';
+import {View,Text,FlatList, ScrollView,TouchableOpacity} from 'react-native';
+import {Container,Content,Header,Card} from 'native-base';
 import * as Colors from '../constants/colors.js';
 import AppStrings from '../constants/strings.js';
-import AppStringsAs from '../constants/strings_as.js';
 import {stylesC} from '../styles/style_common.js';
-import {BackButton,Button,Loader,Row,Col,Box,Line,IconCustom} from '../custom/components.js';
+import {BackButton,Button,Loader,Row,Col,Box} from '../custom/components.js';
 import {NavigationEvents} from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Collections from '../constants/firebase';
 import firestore from '@react-native-firebase/firestore';
 import { Thumbnail } from 'react-native-thumbnail-video';
-import GLOBAL from '../constants/global.js';
-import Utils from '../util/utils.js';
 
 class AdminSubCats extends React.Component {
   static navigationOptions = {
@@ -23,6 +20,9 @@ class AdminSubCats extends React.Component {
     super(props);
     Strings = AppStrings.getInstance();
   }
+
+  maxId1 = 0;
+  maxId2 = 0;
 
   state = {
     loading:false,
@@ -59,17 +59,17 @@ class AdminSubCats extends React.Component {
                 }}/>
             <ScrollView>
             <Col extraStyle={[{padding:15}]}>
-              <Button
-                label='Add Subcategory'
-                activeOpacity={0.6}
-                buttonStyle={[stylesC.button45,{marginTop:0,marginHorizontal:0}]}
-                labelStyle={[stylesC.buttonT16]}
-                onPress={()=>{
-                  if(this.state.loading)
-                    return;
-                  this.props.navigation.navigate('AdminAddSubCat', {catId:this.state.id, size:this.state.models1.length});
-                }}/>
-              <Button
+                <Button
+                  label='Add Subcategory'
+                  activeOpacity={0.6}
+                  buttonStyle={[stylesC.button45,{marginTop:0,marginHorizontal:0}]}
+                  labelStyle={[stylesC.buttonT16]}
+                  onPress={()=>{
+                    if(this.state.loading)
+                      return;
+                    this.props.navigation.navigate('AdminAddSubCat', {catId:this.state.id, size: this.maxId1});
+                  }}/>
+               <Button
                 label='Add Video'
                 activeOpacity={0.6}
                 buttonStyle={[stylesC.button45,{marginTop:10,marginHorizontal:0}]}
@@ -77,8 +77,9 @@ class AdminSubCats extends React.Component {
                 onPress={()=>{
                   if(this.state.loading)
                     return;
-                  this.props.navigation.navigate('AdminAddVideo', {catId:this.state.id, subCatId:'', size:this.state.models2.length});
+                  this.props.navigation.navigate('AdminAddVideo', {catId:this.state.id, subCatId:'', size: this.maxId2});
                 }}/>
+              
               <View style={{width:'100%',marginTop:10}}>
                 {this.state.showSubCats? 
                   <FlatList
@@ -111,10 +112,10 @@ class AdminSubCats extends React.Component {
               containerStyle={[stylesC.loader]}
               animating={this.state.loading}/>
           <NavigationEvents
-            onDidFocus={payload => {
+            onDidFocus={() => {
               this.onFocus();
             }}
-            onDidBlur={payload => {
+            onDidBlur={() => {
               this.onBlur();
             }}/>
         </Content>
@@ -146,6 +147,7 @@ class AdminSubCats extends React.Component {
             </Col>
             <Col center extraStyle={{flex:1}}>
               <TouchableOpacity
+                style={{width:100,height:30,alignItems:'center',justifyContent:'center'}}
                 activeOpacity={0.6}
                 onPress={()=>{
                   if(this.state.loading)
@@ -157,9 +159,11 @@ class AdminSubCats extends React.Component {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{marginTop:10}}
+                style={{width:100,height:30,alignItems:'center',justifyContent:'center'}}
                 activeOpacity={0.6}
                 onPress={()=>{
+                  if(this.state.loading)
+                    return;
                   this.loadSubCatVideos(item.id, item.title);
                 }}>
                  <Text style={[stylesC.textD14,{color:'blue'}]}>
@@ -202,6 +206,7 @@ class AdminSubCats extends React.Component {
             </Col>
             <Col center extraStyle={{flex:1}}>
               <TouchableOpacity
+                style={{width:100,height:30,alignItems:'center',justifyContent:'center'}}
                 activeOpacity={0.6}
                 onPress={()=>{
                   if(this.state.loading)
@@ -266,6 +271,12 @@ class AdminSubCats extends React.Component {
     subCats.forEach(doc => { 
         this.setState(state => {
           let data = doc.data();
+
+          let id = parseInt(data.id);
+          if(id > this.maxId1){
+            this.maxId1 = id;
+          }
+
           let  name = data.name_en;
           let item = {
               id: data.id,
@@ -294,6 +305,12 @@ class AdminSubCats extends React.Component {
     videos.forEach(doc => { 
         this.setState(state => {
         let data = doc.data();
+
+        let id = parseInt(data.id);
+        if(id > this.maxId2){
+          this.maxId2 = id;
+        }
+
         let title = data.title_en;
         let desc = data.desc_en;
         let item = {
@@ -324,11 +341,17 @@ class AdminSubCats extends React.Component {
     let models = [];
     let i=0;
     if(videos.size == 0){
-      this.props.navigation.navigate('AdminVideos',{catId:this.state.id, subCatId:id, title:title_, models:models});
+      this.props.navigation.navigate('AdminVideos',{catId:this.state.id, subCatId:id, title:title_, models:models, size:this.maxId2});
       return;
     }
     videos.forEach(doc => { 
       let data = doc.data();
+
+      let id_ = parseInt(data.id);
+      if(id_ > this.maxId2){
+        this.maxId2 = id_;
+      }
+
       let title = data.title_en;
       let desc = data.desc_en;
       let item = {
@@ -342,7 +365,7 @@ class AdminSubCats extends React.Component {
       models = models.concat(item);
       i++;
       if(i >= videos.size){
-        this.props.navigation.navigate('AdminVideos',{catId:this.state.id, subCatId:id, title:title_, models:models});
+        this.props.navigation.navigate('AdminVideos',{catId:this.state.id, subCatId:id, title:title_, models:models, size:this.maxId2});
       }
     });
   };

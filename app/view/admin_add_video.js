@@ -54,8 +54,8 @@ class AdminAddVideo extends React.Component {
             <ScrollView>
               <Col extraStyle={[{padding:15}]}>
                 <Input
-                  placeholder='Name (English)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
+                  multiline={true}
+                  placeholder='Title (English)'
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -63,8 +63,8 @@ class AdminAddVideo extends React.Component {
                   value={this.state.name_en}
                   blurOnSubmit={false}/>
                 <Input
-                  placeholder='Name (Assamese)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
+                  multiline={true}
+                  placeholder='Title (Assamese)'
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -72,8 +72,8 @@ class AdminAddVideo extends React.Component {
                   value={this.state.name_as}
                   blurOnSubmit={false}/>
                 <Input
+                  multiline={true}
                   placeholder='Description (English)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -81,8 +81,8 @@ class AdminAddVideo extends React.Component {
                   value={this.state.desc_en}
                   blurOnSubmit={false}/>
                 <Input
+                  multiline={true}
                   placeholder='Description (Assamese)'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -90,8 +90,7 @@ class AdminAddVideo extends React.Component {
                   value={this.state.desc_as}
                   blurOnSubmit={false}/>
                 <Input
-                  placeholder='Youtube Link'
-                  inputContainerStyle={[stylesC.fieldP,{marginTop:0,marginHorizontal:0}]}
+                  placeholder='Youtube Video ID'
                   inputStyle={[stylesC.field]}
                   textContentType='none' //Autofill > name,username,emailAddress,password...
                   keyboardType='default' //number-pad,decimal-pad,numeric,email-address,phone-pad
@@ -120,6 +119,19 @@ class AdminAddVideo extends React.Component {
     );
   }
 
+  getYoutubeId = (url)=>{
+    var regex = /[?&]([^=#]+)=([^&#]*)/g;
+    var match;
+    let videoId = '';
+    while (match = regex.exec(url)) {
+      if(match[1] === 'v'){
+        videoId = match[2];
+      };
+    }
+    console.log('youtubeId: '+videoId);
+    return videoId;
+  };
+
   addVideo = async ()=>{
     if(this.state.name_en === '' || this.state.name_as === '' || this.state.desc_en === '' || this.state.desc_as === '' || this.state.link === ''){
       showToast('Fill complete form');
@@ -129,12 +141,16 @@ class AdminAddVideo extends React.Component {
     videoId = videoId+1;
     console.log('videoId: '+videoId);
     this.setState({loading:true});
+
+    let url = 'https://www.youtube.com/watch?v='+this.state.link;
+    console.log('youtubeUrl: '+url);
+
     if(this.state.subCatId !== ''){
       firestore()
         .collection(Collections.categories)
-        .doc(this.state.catId)
+        .doc(''+this.state.catId)
         .collection(Collections.subcategories)
-        .doc(this.state.subCatId)
+        .doc(''+this.state.subCatId)
         .collection(Collections.videos)
         .doc(''+videoId)
         .set({
@@ -143,7 +159,7 @@ class AdminAddVideo extends React.Component {
           'title_as': this.state.name_as,
           'desc_en': this.state.desc_en,
           'desc_as': this.state.desc_as,
-          'link': this.state.link,
+          'link': url,
         })
         .then((ref) => { 
           console.log('ref:'+ref);
@@ -153,7 +169,7 @@ class AdminAddVideo extends React.Component {
     else{
       firestore()
         .collection(Collections.categories)
-        .doc(this.state.catId)
+        .doc(''+this.state.catId)
         .collection(Collections.videos)
         .doc(''+videoId)
         .set({
@@ -162,7 +178,7 @@ class AdminAddVideo extends React.Component {
           'title_as': this.state.name_as,
           'desc_en': this.state.desc_en,
           'desc_as': this.state.desc_as,
-          'link': this.state.link,
+          'link': url,
         })
         .then((ref) => { 
           console.log('ref:'+ref);

@@ -24,9 +24,11 @@ export default class AsyncImage extends React.Component {
     }
 
     async getAndLoadHttpUrl() {
+        console.log('image: '+this.props.image);
         if (this.state.mounted == true) {
             const ref = storage().ref(this.props.image);
             ref.getDownloadURL().then(data => {
+                console.log('url: '+data);
                 this.setState({ url: data });
                 this.setState({ loading: false });
             }).catch(error => {
